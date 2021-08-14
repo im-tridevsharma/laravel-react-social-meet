@@ -1,0 +1,13 @@
+.bg_aanounce {
+    position: fixed;
+    left: 2%;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.bg_register {
+    position: fixed;
+    right: 2%;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
