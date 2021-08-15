@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Loading from "../components/Loading";
+import AuthState from "../context/AuthState";
 
 const Home = lazy(() => import("../screens/Home/Home"));
 const Login = lazy(() => import("../screens/Login/Login"));
@@ -13,19 +14,21 @@ function App() {
     return (
         <div className="App">
             <Router>
-                <Suspense fallback={<Loading />}>
-                    <Header />
-                    <div className="App__screens p-3">
-                        <Switch>
-                            <Route path="/login" component={Login} />
-                            <Route path="/register" component={Register} />
-                            <Route exact path="/" component={Home} />
+                <AuthState>
+                    <Suspense fallback={<Loading />}>
+                        <Header />
+                        <div className="App__screens p-3">
+                            <Switch>
+                                <Route path="/login" component={Login} />
+                                <Route path="/register" component={Register} />
+                                <Route exact path="/" component={Home} />
 
-                            {/* 404 page */}
-                            <Route component={NotFound} />
-                        </Switch>
-                    </div>
-                </Suspense>
+                                {/* 404 page */}
+                                <Route component={NotFound} />
+                            </Switch>
+                        </div>
+                    </Suspense>
+                </AuthState>
             </Router>
         </div>
     );

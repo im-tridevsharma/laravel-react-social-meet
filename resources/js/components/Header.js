@@ -1,22 +1,19 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useContext } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
+import AuthContext from "../context/authContext";
 
 export default function Header() {
     const history = useHistory();
     const location = useLocation();
     const { pathname } = location;
     const active = pathname.split("/");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    useEffect(function () {
-        const token = sessionStorage.getItem("__token");
-        token ? setIsLoggedIn(true) : setIsLoggedIn(false);
-    }, []);
+    const { setToken, setLoggedIn, isLoggedIn, token } =
+        useContext(AuthContext);
 
     const handleLogout = (e) => {
         e.preventDefault();
-        const token = sessionStorage.getItem("__token");
         if (token) {
             axios
                 .post(
@@ -29,10 +26,10 @@ export default function Header() {
                     }
                 )
                 .then((res) => {
-                    console.log(res.data);
                     if (res.data.success) {
                         sessionStorage.removeItem("__token");
-                        setIsLoggedIn(false);
+                        setToken("");
+                        setLoggedIn(false);
                         history.push("/login");
                     } else if (res.data.error) {
                         console.error(res.data.error);

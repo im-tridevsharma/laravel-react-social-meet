@@ -1,16 +1,13 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import FormInput from "../../components/FormInput";
+import Loading from "../../components/Loading";
+import AuthContext from "../../context/authContext";
 
 export default function Login() {
     const history = useHistory();
-
-    useEffect(function () {
-        const token = sessionStorage.getItem("__token");
-        token ? history.push("/") : "";
-    }, []);
 
     const [allValues, setAllValues] = useState({
         email: "",
@@ -19,6 +16,12 @@ export default function Login() {
     });
     const [errors, setErrors] = useState({});
     const [errorMessage, setErrorMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const { setToken, setLoggedIn, isLoggedIn } = useContext(AuthContext);
+
+    useEffect(function () {
+        isLoggedIn ? history.push("/") : "";
+    }, []);
 
     function handleChange(e) {
         setAllValues({ ...allValues, [e.target.name]: e.target.value });
@@ -30,9 +33,11 @@ export default function Login() {
             setErrors({ ...errors, email: ["Email is required!"] });
             return false;
         }
+        setIsLoading(true);
         axios
             .post("api/login", allValues)
             .then((res) => {
+                setIsLoading(false);
                 if (res.data.error) {
                     setErrors(res.data.error);
                 } else {
@@ -53,6 +58,8 @@ export default function Login() {
                     });
                     document.getElementById("login-form").reset();
                     sessionStorage.setItem("__token", res.data.token);
+                    setLoggedIn(true);
+                    setToken(res.data.token);
                     history.push("/");
                 }
             })
@@ -61,6 +68,7 @@ export default function Login() {
 
     return (
         <div className="App__login">
+            {isLoading && <Loading />}
             <div className="row justify-content-center">
                 <div style={{ position: "fixed", left: "10px", top: "20%" }}>
                     <img

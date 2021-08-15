@@ -1,18 +1,13 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import FormInput from "../../components/FormInput";
 import Loading from "../../components/Loading";
 import { useHistory } from "react-router-dom";
-
+import AuthContext from "../../context/authContext";
 import styles from "./Register.module.css";
 
 export default function Register() {
     const history = useHistory();
-
-    useEffect(function () {
-        const token = sessionStorage.getItem("__token");
-        token ? history.push("/") : "";
-    }, []);
 
     const [successMessage, setSuccessMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +19,11 @@ export default function Register() {
         cnf_password: "",
     });
     const [allErrors, setAllErrors] = useState({});
+    const { isLoggedIn } = useContext(AuthContext);
+
+    useEffect(function () {
+        isLoggedIn ? history.push("/") : "";
+    }, []);
 
     function handleOnChange(e) {
         setAllValues({ ...allValues, [e.target.name]: e.target.value });
